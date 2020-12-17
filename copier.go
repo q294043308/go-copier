@@ -58,6 +58,10 @@ func copyFields(av reflect.Value, bv reflect.Value, field reflect.StructField) e
 		// 切片、数组类型需要深拷贝
 		// 切片需要单独 make
 		if ak == reflect.Slice {
+			if bv.IsNil() {
+				return nil
+			}
+
 			slice := reflect.MakeSlice(field.Type, bv.Len(), bv.Cap())
 			av.Set(slice)
 		}
@@ -76,6 +80,10 @@ func copyFields(av reflect.Value, bv reflect.Value, field reflect.StructField) e
 			copyFields(av.Index(i), bvi, field)
 		}
 	} else if ak == reflect.Map {
+		if bv.IsNil() {
+			return nil
+		}
+
 		// map 类型需要深拷贝
 		mmap := reflect.MakeMap(field.Type)
 		av.Set(mmap)
